@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"github.com/c-jimin/BookMaker/core"
+	"github.com/c-jimin/BookMaker/book"
 	"github.com/c-jimin/BookMaker/templates"
 	"github.com/google/uuid"
 	"github.com/tdewolff/minify/v2"
@@ -18,7 +18,7 @@ import (
 )
 
 func NewMobiBook() {
-	b := core.NewBook("重生之2006", getCover(), readFile())
+	b := book.New("重生之2006", getCover(), readFile())
 	b.Authors = []string{"雨去欲续", "CodeTech BookMaker"}
 	err := b.MakeMobi()
 	log.Println(err)
@@ -49,8 +49,8 @@ func fileWriter(filename string) (io.WriteCloser, error) {
 	return file, err
 }
 
-func readFile() []*core.Chapter {
-	chapters := make([]*core.Chapter, 0)
+func readFile() []*book.Chapter {
+	chapters := make([]*book.Chapter, 0)
 	file, err := os.Open("./2006.txt")
 	if err != nil {
 		panic(err)
@@ -63,7 +63,7 @@ func readFile() []*core.Chapter {
 		title := re.FindString(txt)
 		length := len(title)
 		title = title[4 : length-5]
-		chapter := &core.Chapter{
+		chapter := &book.Chapter{
 			Title:          title,
 			FileName:       uuid.New().String(),
 			Content:        strings.NewReader(txt),
@@ -75,7 +75,7 @@ func readFile() []*core.Chapter {
 	}
 	return chapters
 }
-func pretreatment(c *core.Chapter) error {
+func pretreatment(c *book.Chapter) error {
 	content := bytes.NewBuffer(nil)
 	io.Copy(content, c.Content)
 	b := bytes.NewBuffer(nil)

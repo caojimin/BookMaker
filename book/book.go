@@ -1,4 +1,4 @@
-package core
+package book
 
 import (
 	"github.com/c-jimin/BookMaker/errors"
@@ -20,7 +20,7 @@ type Book struct {
 	Renderer   *Renderer
 }
 
-func NewBook(name string, cover io.ReadCloser, chapters []*Chapter) *Book {
+func New(name string, cover io.ReadCloser, chapters []*Chapter) *Book {
 	return &Book{
 		Name:       name,
 		Authors:    []string{"CodeTech BookMaker"},

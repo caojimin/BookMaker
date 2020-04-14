@@ -1,4 +1,4 @@
-package core
+package book
 
 import (
 	"github.com/c-jimin/BookMaker/errors"
