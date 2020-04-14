@@ -1,0 +1,10 @@
+# github.com/google/uuid v1.1.1
+github.com/google/uuid
+# github.com/tdewolff/minify/v2 v2.7.3
+github.com/tdewolff/minify/v2
+github.com/tdewolff/minify/v2/xml
+# github.com/tdewolff/parse/v2 v2.4.2
+github.com/tdewolff/parse/v2
+github.com/tdewolff/parse/v2/buffer
+github.com/tdewolff/parse/v2/strconv
+github.com/tdewolff/parse/v2/xml
