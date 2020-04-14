@@ -11,7 +11,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"path"
 	"regexp"
 	"strings"
 	"text/template"
@@ -27,26 +26,6 @@ func NewMobiBook() {
 func getCover() *os.File {
 	file, _ := os.Open("./templates/cover.jpg")
 	return file
-}
-
-func renderFile(path, filename string, reader io.Reader) error {
-	f, err := fileWriter(path + filename)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	if _, err := io.Copy(f, reader); err != nil {
-		return err
-	}
-	return nil
-}
-
-func fileWriter(filename string) (io.WriteCloser, error) {
-	if err := os.MkdirAll(path.Dir(filename), 0777); err != nil {
-		return nil, err
-	}
-	file, err := os.Create(filename)
-	return file, err
 }
 
 func readFile() []*book.Chapter {
