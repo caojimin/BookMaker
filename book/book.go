@@ -18,6 +18,7 @@ type Book struct {
 	OutputPath string
 	Gen        func(*Book) error
 	Renderer   *Renderer
+	PreChecker func() error
 }
 
 func New(name string, cover io.ReadCloser, chapters []*Chapter) *Book {
@@ -31,6 +32,7 @@ func New(name string, cover io.ReadCloser, chapters []*Chapter) *Book {
 		OutputPath: "./output/",
 		Gen:        DefaultGen,
 		Renderer:   globalRenderer,
+		PreChecker: DefaultPreChecker.Check,
 	}
 }
 
@@ -41,6 +43,11 @@ func (b *Book) MakeEPub() error {
 
 func (b *Book) MakeMobi() error {
 	defer b.cleanup()
+	if b.PreChecker != nil {
+		if err := b.PreChecker(); err != nil {
+			return err
+		}
+	}
 	if err := b.makeToc(); err != nil {
 		return err
 	}
@@ -54,7 +61,9 @@ func (b *Book) MakeMobi() error {
 			return err
 		}
 	}
-	_ = os.Mkdir(b.OutputPath, 0755)
+	if err := os.MkdirAll(b.OutputPath, 0755); err != nil {
+		return err
+	}
 	if err := os.Rename(b.TempPath+filename, b.OutputPath+filename); err != nil {
 		return err
 	}
@@ -103,11 +112,16 @@ func (b *Book) makeNcx(toc *Toc) error {
 }
 
 func (b *Book) makeFile() error {
-	if b.Cover != nil {
-		defer b.Cover.Close()
-		if err := b.Renderer.RenderFile(b.TempPath, "cover.jpg", b.Cover); err != nil {
+	if b.Cover == nil {
+		var err error
+		b.Cover, err = os.Open("./templates/cover.jpg")
+		if err != nil {
 			return err
 		}
+	}
+	defer b.Cover.Close()
+	if err := b.Renderer.RenderFile(b.TempPath, "cover.jpg", b.Cover); err != nil {
+		return err
 	}
 	if b.Chapters != nil {
 		for _, chapter := range b.Chapters {
