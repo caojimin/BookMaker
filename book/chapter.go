@@ -18,13 +18,13 @@ type Chapter struct {
 }
 
 func (c *Chapter) MakeFile(path string) error {
-	if c.Level > 4 {
-		return errors.New("max level is 4 and now is", strconv.Itoa(c.Level))
-	}
 	if c.BeforeMakeFile != nil {
 		if err := c.BeforeMakeFile(c); err != nil {
 			return err
 		}
+	}
+	if c.Level > 4 {
+		return errors.New("max level is 4 and now is", strconv.Itoa(c.Level))
 	}
 	if c.Content == nil {
 		c.Content = bytes.NewBufferString("<body></body>")
