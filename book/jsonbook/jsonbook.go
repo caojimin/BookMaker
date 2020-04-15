@@ -47,8 +47,6 @@ func (jb *JsonBook) genChapters() []*book.Chapter {
 			FileName:       uuid.New().String(),
 			BeforeMakeFile: book.DefaultPreprocessor.Do,
 			Content:        content,
-			StaticFile:     nil,
-			SubChapters:    nil,
 			Level:          1,
 		})
 	}
