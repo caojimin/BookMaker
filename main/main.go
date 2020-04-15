@@ -3,7 +3,9 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"github.com/c-jimin/BookMaker/book"
+	"github.com/c-jimin/BookMaker/book/jsonbook"
 	"github.com/c-jimin/BookMaker/templates"
 	"github.com/google/uuid"
 	"github.com/tdewolff/minify/v2"
@@ -84,6 +86,15 @@ func pretreatment(c *book.Chapter) error {
 	return nil
 }
 
+func bookFromJson() {
+	file, err := os.Open("./2006.json")
+	if err != nil {
+		panic(err)
+	}
+	jb := jsonbook.New(file)
+	fmt.Println(jb.NewBook().MakeMobi())
+}
+
 func main() {
-	NewMobiBook()
+	bookFromJson()
 }
