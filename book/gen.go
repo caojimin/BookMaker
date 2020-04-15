@@ -8,7 +8,7 @@ import (
 	"runtime"
 )
 
-func DefaultGen(book *Book) error {
+func getGenPath() (string, error) {
 	var genPath string
 	switch runtime.GOOS {
 	case "windows":
@@ -18,9 +18,17 @@ func DefaultGen(book *Book) error {
 	case "linux":
 		genPath = "./bin/linux/kindlegen"
 	default:
-		return errors.New("unknown os", runtime.GOOS)
+		return "", errors.New("unknown os", runtime.GOOS)
 	}
 	if _, err := os.Stat(genPath); err != nil {
+		return "", err
+	}
+	return genPath, nil
+}
+
+func DefaultGen(book *Book) error {
+	genPath, err := getGenPath()
+	if err != nil {
 		return err
 	}
 	cmd := exec.Command(genPath, "-dont_append_source", book.TempPath+book.Name+".opf")
