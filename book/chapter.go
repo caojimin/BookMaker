@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"github.com/c-jimin/BookMaker/errors"
 	"io"
+	"path/filepath"
 	"strconv"
 )
 
@@ -29,7 +30,7 @@ func (c *Chapter) MakeFile(path string) error {
 	if c.Content == nil {
 		c.Content = bytes.NewBufferString("<body></body>")
 	}
-	if err := globalRenderer.RenderFile(path, c.FileName+".xhtml", c.Content); err != nil {
+	if err := globalRenderer.RenderFile(filepath.Join(path, c.FileName+".xhtml"), c.Content); err != nil {
 		return err
 	}
 	for _, staticFile := range c.StaticFile {

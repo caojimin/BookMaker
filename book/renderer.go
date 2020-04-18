@@ -6,7 +6,7 @@ import (
 	"github.com/tdewolff/minify/v2/xml"
 	"io"
 	"os"
-	"path"
+	"path/filepath"
 	"sync"
 	"text/template"
 )
@@ -27,16 +27,21 @@ func NewRenderer() *Renderer {
 func (r *Renderer) Render(templates []string, filename string, content interface{}, minimize bool) error {
 	r.Lock()
 	defer r.Unlock()
-	if err := os.MkdirAll(path.Dir(filename), 0777); err != nil {
+	fp, err := filepath.Abs(filename)
+	if err != nil {
 		return err
 	}
-	file, err := os.Create(filename)
+	dir, _ := filepath.Split(fp)
+	if err := os.MkdirAll(dir, 0777); err != nil {
+		return err
+	}
+	file, err := os.Create(fp)
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 	b := bytes.NewBuffer(nil)
-	t := template.New(filename)
+	t := template.New(fp)
 	for _, tpl := range templates {
 		if _, err = t.Parse(tpl); err != nil {
 			return err
@@ -58,13 +63,18 @@ func (r *Renderer) Render(templates []string, filename string, content interface
 	return nil
 }
 
-func (r *Renderer) RenderFile(filepath, filename string, reader io.Reader) error {
+func (r *Renderer) RenderFile(path string, reader io.Reader) error {
 	r.Lock()
 	defer r.Unlock()
-	if err := os.MkdirAll(path.Dir(filepath), 0777); err != nil {
+	fp, err := filepath.Abs(path)
+	if err != nil {
 		return err
 	}
-	file, err := os.Create(filepath + filename)
+	dir, _ := filepath.Split(fp)
+	if err := os.MkdirAll(dir, 0777); err != nil {
+		return err
+	}
+	file, err := os.Create(fp)
 	if err != nil {
 		return err
 	}

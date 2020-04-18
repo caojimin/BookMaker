@@ -1,6 +1,9 @@
 package book
 
-import "io"
+import (
+	"io"
+	"path/filepath"
+)
 
 type StaticFile struct {
 	Name    string
@@ -8,5 +11,5 @@ type StaticFile struct {
 }
 
 func (s *StaticFile) MakeFile(path string) error {
-	return globalRenderer.RenderFile(path, s.Name, s.Content)
+	return globalRenderer.RenderFile(filepath.Join(path, s.Name), s.Content)
 }

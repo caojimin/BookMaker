@@ -5,6 +5,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 )
 
@@ -20,10 +21,14 @@ func getGenPath() (string, error) {
 	default:
 		return "", errors.New("unknown os", runtime.GOOS)
 	}
-	if _, err := os.Stat(genPath); err != nil {
+	fp, err := filepath.Abs(genPath)
+	if err != nil {
 		return "", err
 	}
-	return genPath, nil
+	if _, err := os.Stat(fp); err != nil {
+		return "", err
+	}
+	return fp, nil
 }
 
 func DefaultGen(book *Book) error {
@@ -31,7 +36,11 @@ func DefaultGen(book *Book) error {
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command(genPath, "-dont_append_source", book.TempPath+book.Name+".opf")
+	fp, err := filepath.Abs(filepath.Join(book.TempPath, book.Name+".opf"))
+	if err != nil {
+		return err
+	}
+	cmd := exec.Command(genPath, "-dont_append_source", fp)
 	stdout, _ := cmd.StdoutPipe()
 	stderr, _ := cmd.StderrPipe()
 	defer stdout.Close()

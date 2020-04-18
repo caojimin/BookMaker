@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 	"io"
 	"os"
+	"path/filepath"
 )
 
 type Book struct {
@@ -64,7 +65,15 @@ func (b *Book) MakeMobi() error {
 	if err := os.MkdirAll(b.OutputPath, 0755); err != nil {
 		return err
 	}
-	if err := os.Rename(b.TempPath+filename, b.OutputPath+filename); err != nil {
+	tf, err := filepath.Abs(filepath.Join(b.TempPath, filename))
+	if err != nil {
+		return err
+	}
+	of, err := filepath.Abs(filepath.Join(b.OutputPath, filename))
+	if err != nil {
+		return err
+	}
+	if err := os.Rename(tf, of); err != nil {
 		return err
 	}
 	return nil
@@ -83,7 +92,7 @@ func (b *Book) makeToc() error {
 			templates.TocXhtml,
 			templates.TOCChapter,
 		},
-		b.TempPath+"toc.xhtml",
+		filepath.Join(b.TempPath, "toc.xhtml"),
 		toc, true,
 	)
 }
@@ -95,7 +104,7 @@ func (b *Book) makeOpf(toc *Toc) error {
 			templates.ManifestItem,
 			templates.SpineItemRef,
 		},
-		b.TempPath+b.Name+".opf",
+		filepath.Join(b.TempPath, b.Name+".opf"),
 		toc, true,
 	)
 }
@@ -106,7 +115,7 @@ func (b *Book) makeNcx(toc *Toc) error {
 			templates.TocXml,
 			templates.NavPoint,
 		},
-		b.TempPath+"toc.ncx",
+		filepath.Join(b.TempPath, "toc.ncx"),
 		toc, true,
 	)
 }
@@ -120,7 +129,7 @@ func (b *Book) makeFile() error {
 		}
 	}
 	defer b.Cover.Close()
-	if err := b.Renderer.RenderFile(b.TempPath, "cover.jpg", b.Cover); err != nil {
+	if err := b.Renderer.RenderFile(filepath.Join(b.TempPath, "cover.jpg"), b.Cover); err != nil {
 		return err
 	}
 	if b.Chapters != nil {
