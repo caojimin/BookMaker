@@ -25,7 +25,7 @@ func (jb *JsonBook) NewBook() *book.Book {
 		Authors:    jb.Authors,
 		BookId:     uuid.New().String(),
 		Cover:      nil,
-		Chapters:   jb.genChapters(),
+		Chapters:   jb.GenChapters(),
 		TempPath:   "./" + uuid.New().String() + "/",
 		OutputPath: "./output/",
 		Gen:        book.DefaultGen,
@@ -34,7 +34,7 @@ func (jb *JsonBook) NewBook() *book.Book {
 	}
 }
 
-func (jb *JsonBook) genChapters() []*book.Chapter {
+func (jb *JsonBook) GenChapters() []*book.Chapter {
 	chapters := make([]*book.Chapter, 0)
 	for _, c := range jb.Chapters {
 		content := bytes.NewBuffer(nil)
