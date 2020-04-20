@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/urfave/cli/v2"
 	"io"
 	"os"
 )
 
 func main() {
-	fmt.Println("测试")
 	app := &cli.App{
 		Name:  "bookmaker",
 		Usage: "A util to make a book format mobi or ePub",
