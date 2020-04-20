@@ -38,7 +38,6 @@ var cmdMake = &cli.Command{
 				OutputPath: c.String("output"),
 				Gen:        book.DefaultGen,
 				Renderer:   book.NewRenderer(),
-				PreChecker: book.DefaultPreChecker.Check,
 			}
 			return book.MakeMobi()
 		case "txt":
