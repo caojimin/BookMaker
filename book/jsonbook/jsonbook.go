@@ -6,6 +6,7 @@ import (
 	"github.com/c-jimin/BookMaker/book"
 	"github.com/google/uuid"
 	"io"
+	"io/ioutil"
 )
 
 type JsonBook struct {
@@ -30,7 +31,6 @@ func (jb *JsonBook) NewBook() *book.Book {
 		OutputPath: "./output/",
 		Gen:        book.DefaultGen,
 		Renderer:   book.NewRenderer(),
-		PreChecker: book.DefaultPreChecker.Check,
 	}
 }
 
@@ -46,7 +46,7 @@ func (jb *JsonBook) GenChapters() []*book.Chapter {
 			Title:          c.Title,
 			FileName:       uuid.New().String(),
 			BeforeMakeFile: book.DefaultPreprocessor.Do,
-			Content:        content,
+			Content:        ioutil.NopCloser(content),
 			Level:          1,
 		})
 	}

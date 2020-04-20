@@ -5,6 +5,7 @@ import (
 	"github.com/c-jimin/BookMaker/templates"
 	"github.com/google/uuid"
 	"io"
+	"io/ioutil"
 	"strings"
 	"text/template"
 )
@@ -59,7 +60,7 @@ func Minimize(_ *Chapter, s string) (string, error) {
 }
 
 func SetContent(c *Chapter, s string) (string, error) {
-	c.Content = strings.NewReader(s)
+	c.Content = ioutil.NopCloser(strings.NewReader(s))
 	return s, nil
 }
 
